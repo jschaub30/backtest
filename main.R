@@ -1,4 +1,5 @@
-verbose.flag <- FALSE
+#!/usr/bin/Rscript
+
 require(lubridate, quietly = TRUE)
 require(plyr, quietly = TRUE, warn.conflicts = FALSE)
 require(RJSONIO, quietly = TRUE)

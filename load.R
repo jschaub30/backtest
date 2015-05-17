@@ -2,7 +2,7 @@
 
 # Start with all dates in century on last day of month
 all_dates <- as.Date('1930-01-31') %m+% months(1:(100*12))
-
+all_symbols <- c('TBIL3', 'GOLD', 'INTL', 'GSPC')
 LoadData <- function(sym){
 	if(sym=='TBIL3'){
 		# http://research.stlouisfed.org/fred2/series/TB3MS#
