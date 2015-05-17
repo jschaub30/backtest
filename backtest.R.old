@@ -1,0 +1,120 @@
+#!/usr/bin/Rscript
+
+
+if(length(commandArgs()) == 1){
+	# Run within R shell
+	options("width"=200)
+	symbols <- c('GSPC', 'INTL', 'TBIL3')
+	lookback <- 12
+	start.date <- as.Date('1975-01-31',  "%Y-%m-%d")
+	end.date   <- as.Date('1975-12-31',  "%Y-%m-%d")	
+	# start.date <- as.Date('1940-01-31',  "%Y-%m-%d")
+	# end.date   <- as.Date('1990-01-31',  "%Y-%m-%d")	
+} else {
+	# Run from bash
+	args <- commandArgs(trailingOnly = TRUE)
+
+	if(length(args)<4){
+		help.str <- paste('Usage: ./backtest.R 12 1974-01 2015-01 [SYMBOL]',
+		'Available symbols:',
+		"\t'GSPC'\tS&P 500",
+		"\t'INTL'\tMSCI AWCI",
+		"\t'GOLD'\tGold",
+		"\t'TBIL3'\t3 month treasury bills", sep="\n"
+		)
+		stop(help.str)
+	}
+	lookback   <- as.integer(args[1])
+	if(nchar(args[2])>7 || nchar(args[3])>7){
+		stop('Usage: ./backtest.R 12 1974-01 2015-01\n')
+	}
+	# Start on last date of month
+	start.date <- as.Date(paste(args[2], '01', sep='-'),  "%Y-%m-%d")-1
+	end.date   <- as.Date(paste(args[3], '01', sep='-'),  "%Y-%m-%d")-1
+	symbols    <- args[4:length(args)]
+}
+verbose.flag <- FALSE
+require(lubridate, quietly = TRUE)
+require(plyr, quietly = TRUE, warn.conflicts = FALSE)
+require(RJSONIO, quietly = TRUE)
+
+source('load.R')
+
+source('clean.R')
+
+periods <- length(prices[,1]) - 1  # number of periods
+
+# Now select the security based on lookback gain that month
+idx <- unname(apply(lookback.gains, 1, which.max))
+long.syms <- unlist(lapply(idx, function(x) symbols[x]))
+num.trades <- sum(diff(idx)!=0, na.rm=TRUE)
+trades.per.year <- num.trades/periods*12
+
+# Now calculate forward gains based on monthly gains
+model.gains <- rep(NA, periods)
+for (row in seq(1, periods)){
+	model.gains[row] <- monthly.gains[row,idx[[row]]]
+}
+summary['model'] <- c(rep(NA,lookback+1),model.gains)
+
+model.str <- paste(symbols, collapse="-")			
+monthly.gains[[model.str]] <- model.gains
+symbols <- append(symbols, model.str)
+
+results = data.frame()
+if(verbose.flag){	
+	cat('start,end,periods,lookback,symbol,total gain,cmgr,std dev,trades.per.year\n')
+}
+tpy <- NA
+for (sym in symbols){
+	gain <- prod(monthly.gains[[sym]])
+	cmgr <- gain ^ (1/periods) - 1
+	stdev <- sqrt(var(monthly.gains[[sym]], na.rm=TRUE))
+	if(sym==model.str){tpy <- trades.per.year}
+	if(verbose.flag){	
+		cat(sprintf('%s,%s,%d,%d,%s,%0.1f,%.4f%%,%.4f,0.4f\n',
+		start.date, end.date, periods, lookback,sym, gain, 100*cmgr, stdev, tpy))
+	}
+	results <- rbind(results, data.frame(symbol=sym, gain=gain, cmgr=cmgr, stdev=stdev))
+}
+if(!verbose.flag){
+	cat(sprintf('%s,%s,%d,%d,%s,%0.1f,%.4f%%,%.4f,%0.4f\n',
+	start.date, end.date, periods, lookback,sym, gain, 100*cmgr, stdev, tpy))
+}
+
+
+# Add the model performance back into prices
+prices[[model.str]] <- rep(NA, periods+1)
+prices[[model.str]] = cumprod(c(1,model.gains))
+
+# Normalize the prices based on actual start date
+prices.norm <- prices
+flag <- TRUE
+cvec <- rainbow(length(symbols))
+k <- 0
+
+png('summary.png', width=700, height=500)
+title.string <- sprintf('start=%s, end=%s, lookback=%d months\n', 
+  as.Date(prices$date[1]), as.Date(prices$date[periods]), lookback)
+
+for (sym in symbols){
+	k <- k + 1
+	prices.norm[[sym]] <- prices[[sym]]/prices[[sym]][1]
+	if(flag){
+		flag <- FALSE
+		plot(prices.norm[['date']], prices.norm[[sym]], 
+		col=cvec[k], 
+		xlab="", ylab="Normalized gain",
+		main=title.string,
+		log="y", ylim = c(1, 10^max(ceiling(log10(results$gain)))))
+		legend('topleft', legend=symbols, inset=0.02, col=cvec,
+		lw=1)
+		grid()
+	}
+	else {
+		lines(prices.norm[['date']], prices.norm[[sym]], col=cvec[k])
+	}
+}
+tmp <- dev.off()
+
+write('use "open -a Preview summary.png" to open from mac terminal\n', stderr())

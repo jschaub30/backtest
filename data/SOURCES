@@ -1,0 +1,14 @@
+http://www.macrotrends.net/1333/historical-gold-prices-100-year-chart  <-- gold
+view-source:http://www.macrotrends.net/1333/historical-gold-prices-100-year-chart
+
+http://www.macrotrends.net/1324/s-p-500-earnings-history
+view-source:http://www.macrotrends.net/1324/s-p-500-earnings-history
+
+Total bond
+view-source:https://www.portfoliovisualizer.com/backtest-asset-class-allocation?s=y&TotalBond1=100&portfolio3=Custom&portfolio2=Custom&portfolio1=Custom&annualOperation=0&initialAmount=10000&endYear=2014&mode=2&inflationAdjusted=true&annualAdjustment=0&startYear=1972&rebalanceType=1&annualPercentage=0.0
+
+T-bills
+http://research.stlouisfed.org/fred2/series/TB3MS#
+
+Gold Fixing
+http://research.stlouisfed.org/fred2/series/GOLDAMGBD228NLBM#
