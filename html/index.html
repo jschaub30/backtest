@@ -1,0 +1,78 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html>
+<head>
+  <title></title>
+  <style type="text/css" media="screen">
+  section {
+    width: 98%;
+    height: 400px;
+    /* background: aqua;*/
+    margin: auto;
+    padding: 10px;
+  }
+  div.one {
+    width: 48%;
+    height: 400px;
+    /*      background: red;*/
+    float: left;
+  }
+  div.two {
+    margin-left: 52%;
+    height: 400px;
+    /*      background: black;*/
+  }
+  </style>
+</head>
+<body>
+        <button data-lookback="8">8 month</button>
+        <button data-lookback="10">10 month</button>
+        <button data-lookback="12">12 month</button>
+    <section>
+      <div class="one">
+        <a id="id_5" href="img/5_year_window_10_months.png">
+          <img width="100%" height="100%" src="img/5_year_window_10_months.png">
+        </img> 
+      </a>
+    </div>
+    <div class="two">
+      <a href="img/10_year_window_10_months.png">
+        <img width="100%" height="100%" src="img/10_year_window_10_months.png">             </img> 
+      </a>
+    </div>
+  </section>
+  <section>
+    <div class="one">
+      <a href="img/15_year_window_10_months.png">
+        <img width="100%" height="100%" src="img/15_year_window_10_months.png">
+      </img> 
+    </a>
+  </div>
+  <div class="two">
+    <a href="img/20_year_window_10_months.png">
+      <img width="100%" height="100%" src="img/20_year_window_10_months.png"></img> </a>
+    </div>
+  </section>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script>
+  (function(){
+    var link5 = $('id_5')
+    $('button').on('click', function(){
+      var $this = $(this),
+      lookback = $(this).data('lookback'),
+      years = ['5', '10', '15', '20'];
+
+      for (var k in years){
+        fn = 'img/' + years[k] + '_year_window_' + lookback + '_months.png';
+        console.log(fn);
+      }
+      $this
+        .siblings('button')
+        .removeAttr('disabled')
+        .end()
+        .attr('disabled', '');
+    })
+  })();
+  </script>
+  
+</body>
+</html>
