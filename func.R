@@ -12,13 +12,13 @@ TrimData <- function(all.prices, symbols, start.date, end.date, lookback){
 
 	# Trim all data prior to lookback.date
 	# use special %m-% %m+% lubridate operators
-	lookback.date <- start.date %m-% months(lookback+1) 
+	lookback.date <- start.date %m-% months(lookback) 
 	idx <- which(trim.prices$date>=lookback.date)
 	trim.prices <- trim.prices[idx,]
 
 	if (trim.prices$date[1] != lookback.date){
 		lookback.date <- trim.prices$date[1]
-		start.date <- lookback.date %m+% months(lookback+1) 
+		start.date <- lookback.date %m+% months(lookback) 
 		write('---------------------------\n', stderr())
 		write(sprintf('Insufficient data: adjusting start date to %s\n',
 		as.Date(start.date)), stderr())
@@ -53,14 +53,17 @@ CalculateGains <- function(trim.prices, lookback){
 	colnames(monthly.gains) <- symbols
 	colnames(lookback.gains) <- symbols
 
-	# Summary is only used for later inspection
-	summary <- data.frame(date=trim.prices$date)
-	summary <- cbind(summary, lookback.gains)
-	colnames(summary) <- c('date', paste(symbols, 'lg', sep='.'))
+	# gains.summary is only used for later inspection	
+	gains.summary <<- trim.prices
+	gains.summary <<- cbind(gains.summary, lookback.gains)
 	
 	idx <- apply(lookback.gains, 1, which.max)
-	summary[['signal']] <- lapply(idx, function(x) symbols[x])
-	summary <- cbind(summary, monthly.gains)
+	gains.summary[['signal']] <<- lapply(idx, function(x) symbols[x])
+	gains.summary <<- cbind(gains.summary, monthly.gains)
+	cn <<- c('date', symbols, 
+	  paste(symbols, 'lg', sep='.'), 'signal', 
+		  paste(symbols, 'mg', sep='.'))
+  colnames(gains.summary) <<- cn
 
 	# Now trim all data
 	lookback.gains <- tail(lookback.gains, -lookback)

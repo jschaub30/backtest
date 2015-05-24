@@ -21,12 +21,25 @@
     height: 400px;
     /*      background: black;*/
   }
+  button {
+    width: 120px;
+  }
   </style>
 </head>
 <body>
-        <button data-lookback="8">8 month</button>
-        <button data-lookback="10">10 month</button>
-        <button data-lookback="12">12 month</button>
+  <span>
+    <button class="lookback" data-lookback="8">8 month</button>
+    <button class="lookback default" data-lookback="10">10 month</button>
+    <button class="lookback" data-lookback="12">12 month</button>
+  </span>
+  <span id="strategies">
+    <button class="strategy default" data-strategy="GEM3">GEM3</button>
+    <button class="strategy" data-strategy="GEM4">GEM3+Gold</button>
+  </span>
+  <span>
+    <button class="plot" data-plot="">Time series</button>
+    <button class="plot default" data-plot="_box">Box plot</button>
+  </span>
     <section>
       <div class="one">
         <a id="id_5" href="img/5_year_window_10_months.png">
@@ -35,42 +48,85 @@
       </a>
     </div>
     <div class="two">
-      <a href="img/10_year_window_10_months.png">
+      <a id="id_10" href="img/10_year_window_10_months.png">
         <img width="100%" height="100%" src="img/10_year_window_10_months.png">             </img> 
       </a>
     </div>
   </section>
   <section>
     <div class="one">
-      <a href="img/15_year_window_10_months.png">
+      <a id="id_15" href="img/15_year_window_10_months.png">
         <img width="100%" height="100%" src="img/15_year_window_10_months.png">
       </img> 
     </a>
   </div>
   <div class="two">
-    <a href="img/20_year_window_10_months.png">
+    <a id="id_20" href="img/20_year_window_10_months.png">
       <img width="100%" height="100%" src="img/20_year_window_10_months.png"></img> </a>
     </div>
   </section>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
   <script>
   (function(){
-    var link5 = $('id_5')
-    $('button').on('click', function(){
-      var $this = $(this),
-      lookback = $(this).data('lookback'),
-      years = ['5', '10', '15', '20'];
-
+    var ids = ['#id_5', '#id_10', '#id_15', '#id_20'],
+    years = ['5', '10', '15', '20'],
+    lookback = 10,
+    strategy = 'GEM3';
+    plot = '_box';
+    
+    function updateImages() {
+      console.log(strategy);
+      console.log(lookback);
+      
       for (var k in years){
-        fn = 'img/' + years[k] + '_year_window_' + lookback + '_months.png';
+        fn = 'img/' + strategy + '_' + years[k] + '_year_window_'
+        fn += lookback + '_months' + plot + '.png';
+        $(ids[k]).attr('href', fn);
+        $(ids[k] + " img").attr('src', fn);
         console.log(fn);
       }
+    };
+
+    updateImages();
+    
+    $('button.lookback').on('click', function(){
+      var $this = $(this);
+      
+      lookback = $this.data('lookback');
+      updateImages();
+
       $this
         .siblings('button')
         .removeAttr('disabled')
         .end()
         .attr('disabled', '');
-    })
+    });
+    
+    $('button.strategy').on('click', function(){
+      var $this = $(this);
+      strategy = $this.data('strategy');
+      
+      updateImages();
+      $this
+        .siblings('button')
+        .removeAttr('disabled')
+        .end()
+        .attr('disabled', '');
+    });
+
+    $('button.plot').on('click', function(){
+      var $this = $(this);
+      plot = $this.data('plot');
+      
+      updateImages();
+      $this
+        .siblings('button')
+        .removeAttr('disabled')
+        .end()
+        .attr('disabled', '');
+    });
+
+    $('button.default').attr('disabled', '');
   })();
   </script>
   
