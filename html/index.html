@@ -6,7 +6,6 @@
   section {
     width: 98%;
     height: 400px;
-    /* background: aqua;*/
     margin: auto;
     padding: 10px;
   }
@@ -23,20 +22,41 @@
   }
   button {
     width: 120px;
+    background: #eee;
+       -webkit-border-radius: 8px;
+       -moz-border-radius: 8px;
+    border-radius: 8px;
+  }
+  button:hover{
+    background: #333;
+    color: #fff;
+    cursor: pointer;
+   }
+  button:disabled {
+     background: #28597a;
+     color: #fff;
+    }
+  button:active {
+       background: #28597a;
+       color: #fff;
+      }
+  span.buttons{
+/*    background: rgba(255, 0, 0, 0.1);*/
+    padding: 0.2em 1em 0.2em 1em;   
   }
   </style>
 </head>
 <body>
-  <span>
+  <span class="buttons">
     <button class="lookback" data-lookback="8">8 month</button>
     <button class="lookback default" data-lookback="10">10 month</button>
     <button class="lookback" data-lookback="12">12 month</button>
   </span>
-  <span id="strategies">
+  <span class="buttons">
     <button class="strategy default" data-strategy="GEM3">GEM3</button>
     <button class="strategy" data-strategy="GEM4">GEM3+Gold</button>
   </span>
-  <span>
+  <span class="buttons">
     <button class="plot" data-plot="">Time series</button>
     <button class="plot default" data-plot="_box">Box plot</button>
   </span>
