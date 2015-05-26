@@ -49,16 +49,12 @@
 <body>
   <span class="buttons">
     <button class="lookback" data-lookback="8">8 month</button>
-    <button class="lookback default" data-lookback="10">10 month</button>
-    <button class="lookback" data-lookback="12">12 month</button>
-  </span>
-  <span class="buttons">
-    <button class="strategy default" data-strategy="GEM3">GEM3</button>
-    <button class="strategy" data-strategy="GEM4">GEM3+Gold</button>
+    <button class="lookback" data-lookback="10">10 month</button>
+    <button class="lookback default" data-lookback="12">12 month</button>
   </span>
   <span class="buttons">
     <button class="plot" data-plot="">Time series</button>
-    <button class="plot default" data-plot="_box">Box plot</button>
+    <button class="plot default" data-plot="_box_cagr">Box plot</button>
   </span>
     <section>
       <div class="one">
@@ -90,20 +86,16 @@
   (function(){
     var ids = ['#id_5', '#id_10', '#id_15', '#id_20'],
     years = ['5', '10', '15', '20'],
-    lookback = 10,
-    strategy = 'GEM3';
-    plot = '_box';
+    lookback = 12,
+    plot = '_box_cagr';
     
     function updateImages() {
-      console.log(strategy);
-      console.log(lookback);
       
       for (var k in years){
-        fn = 'img/' + strategy + '_' + years[k] + '_year_window_'
+        fn = 'img/' + years[k] + '_year_window_'
         fn += lookback + '_months' + plot + '.png';
         $(ids[k]).attr('href', fn);
         $(ids[k] + " img").attr('src', fn);
-        console.log(fn);
       }
     };
 
