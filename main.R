@@ -1,4 +1,4 @@
-#!/usr/bin/Rscript
+#!/usr/bin/env Rscript
 
 require(lubridate, quietly = TRUE)
 require(plyr, quietly = TRUE, warn.conflicts = FALSE)
